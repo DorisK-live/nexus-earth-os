@@ -112,8 +112,9 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
         width={size.width}
         height={size.height}
         backgroundColor="rgba(0,0,0,0)"
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
-        bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
+        globeImageUrl="/globe/earth-night.jpg"
+        bumpImageUrl="/globe/earth-topology.png"
+
         atmosphereColor="#7fd8ff"
         atmosphereAltitude={0.22}
         pointsData={points}
