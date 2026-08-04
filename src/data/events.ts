@@ -60,6 +60,14 @@ export const SEVERITY_COLOR: Record<Severity, string> = {
   watch: "var(--sev-watch)",
 };
 
+/** Hex equivalents for WebGL layers that cannot parse CSS variables. */
+export const GLOBE_SEVERITY_COLOR: Record<Severity, string> = {
+  critical: "#ff515a",
+  high: "#ff9538",
+  moderate: "#efcf4b",
+  watch: "#2ad5e5",
+};
+
 export const NEXUS_EVENTS: NexusEvent[] = [
   {
     id: "eq-tohoku",
