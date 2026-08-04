@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { SEVERITY_COLOR, type NexusEvent } from "@/data/events";
+import { GLOBE_SEVERITY_COLOR, type NexusEvent } from "@/data/events";
 
 interface Props {
   events: NexusEvent[];
