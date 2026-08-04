@@ -65,7 +65,7 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
         id: event.id,
         lat: event.lat,
         lng: event.lng,
-        color: SEVERITY_COLOR[event.severity],
+        color: GLOBE_SEVERITY_COLOR[event.severity],
         size: event.severity === "critical" ? 0.9 : event.severity === "high" ? 0.7 : 0.5,
         label: `${event.title} — ${event.location}`,
       })),
