@@ -80,7 +80,7 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
         startLng: event.lng,
         endLat: link.lat,
         endLng: link.lng,
-        color: [SEVERITY_COLOR[event.severity], "rgba(120, 220, 255, 0.05)"] as [string, string],
+        color: [GLOBE_SEVERITY_COLOR[event.severity], "rgba(120, 220, 255, 0.05)"] as [string, string],
       })),
     );
   }, [events, selectedId]);
