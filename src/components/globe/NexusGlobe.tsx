@@ -112,33 +112,21 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
         width={size.width}
         height={size.height}
         backgroundColor="rgba(0,0,0,0)"
-        globeImageUrl="/globe/earth-night.jpg"
-        bumpImageUrl="/globe/earth-topology.png"
+        globeImageUrl="/globe/earth-day.jpg"
 
-        atmosphereColor="#7fd8ff"
-        atmosphereAltitude={0.22}
+        ambientLightColor="#ffffff"
+        ambientLightIntensity={1.4}
+        directionalLightColor="#ffffff"
+        directionalLightIntensity={2.2}
+        pointLightColor="#ffffff"
+        pointLightIntensity={1.0}
         pointsData={points}
         pointLat="lat"
         pointLng="lng"
         pointColor="color"
         pointAltitude={0.02}
         pointRadius={(d: unknown) => (d as GlobePoint).size * 0.55}
-        pointLabel="label"
         onPointClick={(d: unknown) => onSelect((d as GlobePoint).id)}
-        ringsData={points}
-        ringLat="lat"
-        ringLng="lng"
-        ringColor={(d: unknown) => () => (d as GlobePoint).color}
-        ringMaxRadius={3.2}
-        ringPropagationSpeed={1.4}
-        ringRepeatPeriod={2200}
-        arcsData={arcs}
-        arcColor="color"
-        arcAltitudeAutoScale={0.42}
-        arcStroke={0.4}
-        arcDashLength={0.45}
-        arcDashGap={0.9}
-        arcDashAnimateTime={2600}
       />
     </div>
   );
