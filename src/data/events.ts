@@ -32,6 +32,10 @@ export interface NexusEvent {
   summary: string;
   metric: string;
   links: ImpactLink[];
+  /** True for events sourced from a real, live external feed (e.g. USGS). Absent/false = illustrative scenario. */
+  isLive?: boolean;
+  /** Absolute detection time in epoch ms, used to recompute a live event's age accurately on every tick. */
+  timestampMs?: number;
 }
 
 export const DOMAIN_LABELS: Record<Domain, string> = {

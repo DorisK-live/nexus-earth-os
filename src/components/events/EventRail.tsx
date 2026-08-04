@@ -1,7 +1,23 @@
-import { AlertTriangle, Activity, ShieldAlert, CloudSun, HeartHandshake, Plane, Container, LineChart, Radio } from "lucide-react";
+import {
+  AlertTriangle,
+  Activity,
+  ShieldAlert,
+  CloudSun,
+  HeartHandshake,
+  Plane,
+  Container,
+  LineChart,
+  Radio,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import { DOMAIN_LABELS, SEVERITY_COLOR, SEVERITY_LABELS, type Domain, type NexusEvent } from "@/data/events";
+import {
+  DOMAIN_LABELS,
+  SEVERITY_COLOR,
+  SEVERITY_LABELS,
+  type Domain,
+  type NexusEvent,
+} from "@/data/events";
 import { cn } from "@/lib/utils";
 
 export const DOMAIN_ICONS: Record<Domain, LucideIcon> = {
@@ -32,7 +48,14 @@ interface Props {
   onSelect: (id: string) => void;
 }
 
-export function EventRail({ events, ages, activeDomain, selectedId, onDomainChange, onSelect }: Props) {
+export function EventRail({
+  events,
+  ages,
+  activeDomain,
+  selectedId,
+  onDomainChange,
+  onSelect,
+}: Props) {
   const domains: (Domain | "all")[] = ["all", ...(Object.keys(DOMAIN_LABELS) as Domain[])];
 
   return (
@@ -47,7 +70,11 @@ export function EventRail({ events, ages, activeDomain, selectedId, onDomainChan
             Live signal stream
           </h2>
         </div>
-        <span className="font-mono text-xs text-muted-foreground">{events.length} active</span>
+        <span className="font-mono text-xs text-muted-foreground">
+          {events.filter((e) => e.isLive).length > 0
+            ? `${events.filter((e) => e.isLive).length} live · ${events.filter((e) => !e.isLive).length} illustrative`
+            : `${events.length} active`}
+        </span>
       </header>
 
       <div className="mb-3 flex flex-wrap gap-1.5" role="group" aria-label="Filter by domain">
@@ -89,7 +116,9 @@ export function EventRail({ events, ages, activeDomain, selectedId, onDomainChan
                 <div className="flex items-start gap-3">
                   <span
                     className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md"
-                    style={{ backgroundColor: `color-mix(in oklab, ${SEVERITY_COLOR[event.severity]} 18%, transparent)` }}
+                    style={{
+                      backgroundColor: `color-mix(in oklab, ${SEVERITY_COLOR[event.severity]} 18%, transparent)`,
+                    }}
                   >
                     <Icon
                       className="h-3.5 w-3.5"
@@ -98,7 +127,14 @@ export function EventRail({ events, ages, activeDomain, selectedId, onDomainChan
                     />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-foreground">{event.title}</p>
+                    <p className="flex items-center gap-1.5 truncate text-sm font-medium text-foreground">
+                      {event.isLive && (
+                        <span className="shrink-0 rounded-full bg-primary/15 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-primary">
+                          Live
+                        </span>
+                      )}
+                      <span className="truncate">{event.title}</span>
+                    </p>
                     <p className="mt-0.5 flex flex-wrap items-center gap-x-2 font-mono text-[11px] text-muted-foreground">
                       <span>{event.location}</span>
                       <span aria-hidden="true">·</span>

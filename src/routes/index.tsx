@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Globe2 } from "lucide-react";
 
-import { GlobeStage } from "@/components/globe/GlobeStage";
+import { MapStage } from "@/components/map/MapStage";
 import { EventRail } from "@/components/events/EventRail";
 import { ImpactPanel } from "@/components/intelligence/ImpactPanel";
 import { AskNexus } from "@/components/intelligence/AskNexus";
@@ -13,6 +13,7 @@ import { PredictionSection } from "@/components/sections/PredictionSection";
 import { AudienceSection } from "@/components/sections/AudienceSection";
 import { ClosingSection } from "@/components/sections/ClosingSection";
 import { DOMAIN_LABELS, NEXUS_EVENTS, type Domain } from "@/data/events";
+import { useLiveEvents } from "@/hooks/use-live-events";
 
 const TITLE = "NEXUS EARTH — The Planet's Intelligent Operating System";
 const DESCRIPTION =
@@ -36,38 +37,58 @@ function NexusEarth() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [domain, setDomain] = useState<Domain | "all">("all");
   const [tick, setTick] = useState(0);
+  const { liveEvents, fetchedAt, error: liveError } = useLiveEvents();
 
   useEffect(() => {
     const id = window.setInterval(() => setTick((t) => t + 1), 20000);
     return () => window.clearInterval(id);
   }, []);
 
+  // Real seismic activity from USGS replaces the illustrative "disaster" scenarios once it loads.
+  // Everything else stays illustrative until a licensed live source is wired in for that domain.
+  const allEvents = useMemo(() => {
+    const illustrative = NEXUS_EVENTS.filter(
+      (e) => e.domain !== "disaster" || liveEvents.length === 0,
+    );
+    return [...liveEvents, ...illustrative];
+  }, [liveEvents]);
+
   const ages = useMemo(() => {
     const drift = tick / 3;
+    const now = Date.now();
     return Object.fromEntries(
-      NEXUS_EVENTS.map((e) => [e.id, e.detectedMinutesAgo + drift]),
+      allEvents.map((e) => [
+        e.id,
+        e.timestampMs != null ? (now - e.timestampMs) / 60000 : e.detectedMinutesAgo + drift,
+      ]),
     ) as Record<string, number>;
-  }, [tick]);
+  }, [allEvents, tick]);
 
   const visibleEvents = useMemo(
     () =>
-      (domain === "all" ? NEXUS_EVENTS : NEXUS_EVENTS.filter((e) => e.domain === domain))
+      (domain === "all" ? allEvents : allEvents.filter((e) => e.domain === domain))
         .slice()
-        .sort((a, b) => a.detectedMinutesAgo - b.detectedMinutesAgo),
-    [domain],
+        .sort(
+          (a, b) => (ages[a.id] ?? a.detectedMinutesAgo) - (ages[b.id] ?? b.detectedMinutesAgo),
+        ),
+    [allEvents, domain, ages],
   );
 
   const selectedEvent = useMemo(
-    () => NEXUS_EVENTS.find((e) => e.id === selectedId) ?? null,
-    [selectedId],
+    () => allEvents.find((e) => e.id === selectedId) ?? null,
+    [allEvents, selectedId],
   );
 
   const askContext = useMemo(
     () =>
-      NEXUS_EVENTS.slice(0, 10)
-        .map((e) => `- [${DOMAIN_LABELS[e.domain]}] ${e.title} (${e.location}, ${e.country}) — ${e.metric}`)
+      allEvents
+        .slice(0, 10)
+        .map(
+          (e) =>
+            `- [${DOMAIN_LABELS[e.domain]}] ${e.title} (${e.location}, ${e.country}) — ${e.metric}`,
+        )
         .join("\n"),
-    [],
+    [allEvents],
   );
 
   return (
@@ -117,16 +138,36 @@ function NexusEarth() {
 
             <div className="mt-10 grid gap-4 lg:grid-cols-[1.55fr_1fr]">
               <div className="relative h-[420px] overflow-hidden rounded-xl border border-glass-border bg-surface/40 sm:h-[540px] lg:h-[680px]">
-                <GlobeStage
-                  events={visibleEvents}
-                  selectedId={selectedId}
-                  onSelect={setSelectedId}
-                />
+                <MapStage events={visibleEvents} selectedId={selectedId} onSelect={setSelectedId} />
                 {!selectedEvent && (
                   <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-glass-border bg-glass px-3 py-1.5 text-center font-mono text-[11px] text-muted-foreground backdrop-blur">
-                    Drag to rotate · select a signal for its impact chain
+                    Scroll to zoom · drag to pan · select a signal for its impact chain
                   </p>
                 )}
+                <div className="pointer-events-none absolute left-4 top-4 rounded-full border border-glass-border bg-glass px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground backdrop-blur">
+                  {liveEvents.length > 0 ? (
+                    <span className="flex items-center gap-1.5">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-primary" />
+                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                      </span>
+                      Live seismic feed · USGS
+                    </span>
+                  ) : liveError ? (
+                    "Live feed unavailable — showing illustrative data"
+                  ) : (
+                    "Connecting to live feed…"
+                  )}
+                  {fetchedAt && liveEvents.length > 0 && (
+                    <span className="ml-2 opacity-60">
+                      updated{" "}
+                      {new Date(fetchedAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="flex h-[680px] max-h-[680px] flex-col gap-4 lg:h-[680px]">

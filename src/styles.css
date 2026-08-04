@@ -217,6 +217,46 @@
   animation: nexus-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* Leaflet chrome, restyled to match the NEXUS EARTH glass/dark palette (no new colors introduced). */
+.leaflet-container {
+  background: var(--surface);
+  font-family: var(--font-sans);
+}
+.leaflet-control-zoom {
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+.leaflet-control-zoom a {
+  background-color: var(--glass) !important;
+  color: var(--foreground) !important;
+  backdrop-filter: blur(18px) saturate(140%);
+}
+.leaflet-control-zoom a:hover {
+  background-color: var(--surface-2) !important;
+}
+.leaflet-control-attribution {
+  background-color: var(--glass) !important;
+  color: var(--muted-foreground) !important;
+  backdrop-filter: blur(10px);
+}
+.leaflet-control-attribution a {
+  color: var(--muted-foreground) !important;
+}
+.nexus-map-tooltip {
+  background-color: var(--glass) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--foreground) !important;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 8px;
+  backdrop-filter: blur(12px);
+}
+.nexus-map-tooltip::before {
+  border-top-color: var(--glass-border) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

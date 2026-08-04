@@ -27,8 +27,10 @@ export function ClosingSection() {
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
             NEXUS EARTH
           </p>
-          <p className="text-xs text-muted-foreground">
-            Demonstration environment. Events shown are representative scenarios, not live feeds.
+          <p className="max-w-md text-xs text-muted-foreground">
+            Seismic activity is live, sourced automatically from the USGS Earthquake Hazards
+            Program. Other domains are illustrative scenarios pending licensed live data
+            integration.
           </p>
         </div>
 

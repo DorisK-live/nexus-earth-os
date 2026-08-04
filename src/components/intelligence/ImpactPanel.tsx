@@ -83,10 +83,20 @@ export function ImpactPanel({ event, onClose }: Props) {
           <Icon className="h-4 w-4" style={{ color: accent }} aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em]" style={{ color: accent }}>
-            {SEVERITY_LABELS[event.severity]} · {DOMAIN_LABELS[event.domain]}
+          <p
+            className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.16em]"
+            style={{ color: accent }}
+          >
+            {event.isLive && (
+              <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-primary">Live</span>
+            )}
+            <span>
+              {SEVERITY_LABELS[event.severity]} · {DOMAIN_LABELS[event.domain]}
+            </span>
           </p>
-          <h3 className="mt-1 text-base font-semibold leading-snug text-foreground">{event.title}</h3>
+          <h3 className="mt-1 text-base font-semibold leading-snug text-foreground">
+            {event.title}
+          </h3>
           <p className="mt-1 font-mono text-[11px] text-muted-foreground">
             {event.location}, {event.country} · {event.metric} · {event.source}
           </p>
@@ -115,7 +125,10 @@ export function ImpactPanel({ event, onClose }: Props) {
 
         {error && !loading && (
           <div className="flex items-start gap-2 rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-foreground">
-            <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
+            <TriangleAlert
+              className="mt-0.5 h-4 w-4 shrink-0 text-destructive"
+              aria-hidden="true"
+            />
             <div>
               <p>{error}</p>
               <button
@@ -147,13 +160,17 @@ export function ImpactPanel({ event, onClose }: Props) {
                       <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                         {impact.sector} · {impact.horizon}
                       </p>
-                      <p className="mt-0.5 text-sm font-medium text-foreground">{impact.headline}</p>
+                      <p className="mt-0.5 text-sm font-medium text-foreground">
+                        {impact.headline}
+                      </p>
                     </div>
                     <span className="shrink-0 font-display text-lg tabular-nums text-foreground">
                       {impact.probability}%
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{impact.detail}</p>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    {impact.detail}
+                  </p>
                   <div className="mt-3 space-y-1.5">
                     <Meter label="Probability" value={impact.probability} color={accent} />
                     <Meter label="Confidence" value={impact.confidence} color="var(--signal)" />
@@ -175,7 +192,9 @@ export function ImpactPanel({ event, onClose }: Props) {
                       aria-hidden="true"
                     />
                     <p className="font-mono text-[11px] text-primary">{step.window}</p>
-                    <p className="text-xs leading-relaxed text-muted-foreground">{step.development}</p>
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      {step.development}
+                    </p>
                   </li>
                 ))}
               </ol>
@@ -194,7 +213,9 @@ export function ImpactPanel({ event, onClose }: Props) {
                     <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-primary">
                       {action.audience}
                     </p>
-                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{action.action}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      {action.action}
+                    </p>
                   </div>
                 ))}
               </div>
