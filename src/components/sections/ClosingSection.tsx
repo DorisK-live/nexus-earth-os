@@ -31,6 +31,12 @@ export function ClosingSection() {
             Demonstration environment. Events shown are representative scenarios, not live feeds.
           </p>
         </div>
+
+        <div className="mt-8 flex justify-center">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60">
+            DorisK production. Bringing thoughts to live.
+          </p>
+        </div>
       </div>
     </footer>
   );
