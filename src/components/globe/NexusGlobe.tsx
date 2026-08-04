@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { SEVERITY_COLOR, type NexusEvent } from "@/data/events";
+import { GLOBE_SEVERITY_COLOR, type NexusEvent } from "@/data/events";
 
 interface Props {
   events: NexusEvent[];
@@ -65,7 +65,7 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
         id: event.id,
         lat: event.lat,
         lng: event.lng,
-        color: SEVERITY_COLOR[event.severity],
+        color: GLOBE_SEVERITY_COLOR[event.severity],
         size: event.severity === "critical" ? 0.9 : event.severity === "high" ? 0.7 : 0.5,
         label: `${event.title} — ${event.location}`,
       })),
@@ -80,7 +80,7 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
         startLng: event.lng,
         endLat: link.lat,
         endLng: link.lng,
-        color: [SEVERITY_COLOR[event.severity], "rgba(120, 220, 255, 0.05)"] as [string, string],
+        color: [GLOBE_SEVERITY_COLOR[event.severity], "rgba(120, 220, 255, 0.05)"] as [string, string],
       })),
     );
   }, [events, selectedId]);
@@ -112,11 +112,18 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
         width={size.width}
         height={size.height}
         backgroundColor="rgba(0,0,0,0)"
-        globeImageUrl="/globe/earth-night.jpg"
+        globeImageUrl="/globe/earth-day.jpg"
         bumpImageUrl="/globe/earth-topology.png"
 
-        atmosphereColor="#7fd8ff"
-        atmosphereAltitude={0.22}
+        ambientLightColor="#ffffff"
+        ambientLightIntensity={1.4}
+        directionalLightColor="#ffffff"
+        directionalLightIntensity={2.2}
+        pointLightColor="#ffffff"
+        pointLightIntensity={1.0}
+
+        atmosphereColor="#a8e6ff"
+        atmosphereAltitude={0.25}
         pointsData={points}
         pointLat="lat"
         pointLng="lng"
