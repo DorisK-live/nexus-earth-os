@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiAnalyzeRouteImport } from './routes/api/analyze'
 import { Route as ApiAskRouteImport } from './routes/api/ask'
 import { Route as ApiLiveEventsRouteImport } from './routes/api/live-events'
+import { Route as ApiLiveStreamRouteImport } from './routes/api/live-stream'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const ApiLiveEventsRoute = ApiLiveEventsRouteImport.update({
   path: '/api/live-events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiLiveStreamRoute = ApiLiveStreamRouteImport.update({
+  id: '/api/live-stream',
+  path: '/api/live-stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/ask': typeof ApiAskRoute
   '/api/live-events': typeof ApiLiveEventsRoute
+  '/api/live-stream': typeof ApiLiveStreamRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/ask': typeof ApiAskRoute
   '/api/live-events': typeof ApiLiveEventsRoute
+  '/api/live-stream': typeof ApiLiveStreamRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,22 @@ export interface FileRoutesById {
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/ask': typeof ApiAskRoute
   '/api/live-events': typeof ApiLiveEventsRoute
+  '/api/live-stream': typeof ApiLiveStreamRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/analyze' | '/api/ask' | '/api/live-events'
+  fullPaths:
+    '/' | '/api/analyze' | '/api/ask' | '/api/live-events' | '/api/live-stream'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/analyze' | '/api/ask' | '/api/live-events'
-  id: '__root__' | '/' | '/api/analyze' | '/api/ask' | '/api/live-events'
+  to:
+    '/' | '/api/analyze' | '/api/ask' | '/api/live-events' | '/api/live-stream'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/analyze'
+    | '/api/ask'
+    | '/api/live-events'
+    | '/api/live-stream'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +84,7 @@ export interface RootRouteChildren {
   ApiAnalyzeRoute: typeof ApiAnalyzeRoute
   ApiAskRoute: typeof ApiAskRoute
   ApiLiveEventsRoute: typeof ApiLiveEventsRoute
+  ApiLiveStreamRoute: typeof ApiLiveStreamRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +117,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiLiveEventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/live-stream': {
+      id: '/api/live-stream'
+      path: '/api/live-stream'
+      fullPath: '/api/live-stream'
+      preLoaderRoute: typeof ApiLiveStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,17 +132,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAnalyzeRoute: ApiAnalyzeRoute,
   ApiAskRoute: ApiAskRoute,
   ApiLiveEventsRoute: ApiLiveEventsRoute,
+  ApiLiveStreamRoute: ApiLiveStreamRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
