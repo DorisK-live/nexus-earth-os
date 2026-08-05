@@ -2,10 +2,18 @@ import { useEffect, useRef, useState } from "react";
 
 import type { NexusEvent } from "@/data/events";
 
-const POLL_MS = 3 * 60 * 1000; // USGS feed updates every ~5 min; poll a bit more often than that isn't useful, so 3 min is a reasonable, low-noise cadence.
+const POLL_MS = 3 * 60 * 1000; // conservative, low-noise polling cadence across all sources
+
+export interface LiveSourceStatus {
+  name: string;
+  ok: boolean;
+  count: number;
+  error?: string;
+}
 
 interface LiveEventsState {
   liveEvents: NexusEvent[];
+  sources: LiveSourceStatus[];
   fetchedAt: string | null;
   loading: boolean;
   error: string | null;
@@ -14,6 +22,7 @@ interface LiveEventsState {
 export function useLiveEvents(): LiveEventsState {
   const [state, setState] = useState<LiveEventsState>({
     liveEvents: [],
+    sources: [],
     fetchedAt: null,
     loading: true,
     error: null,
@@ -28,23 +37,26 @@ export function useLiveEvents(): LiveEventsState {
         const response = await fetch("/api/live-events");
         const payload = (await response.json()) as {
           events?: NexusEvent[];
+          sources?: LiveSourceStatus[];
           fetchedAt?: string;
           error?: string;
         };
         if (!mounted.current) return;
-        if (!response.ok || payload.error) {
+        if (!response.ok && !(payload.events && payload.events.length > 0)) {
           setState((s) => ({
             ...s,
             loading: false,
+            sources: payload.sources ?? s.sources,
             error: payload.error ?? "Live feed unavailable.",
           }));
           return;
         }
         setState({
           liveEvents: payload.events ?? [],
+          sources: payload.sources ?? [],
           fetchedAt: payload.fetchedAt ?? new Date().toISOString(),
           loading: false,
-          error: null,
+          error: payload.error ?? null,
         });
       } catch {
         if (!mounted.current) return;

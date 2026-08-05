@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Globe2 } from "lucide-react";
 
-import { MapStage } from "@/components/map/MapStage";
+import { GlobeStage } from "@/components/globe/GlobeStage";
 import { EventRail } from "@/components/events/EventRail";
 import { ImpactPanel } from "@/components/intelligence/ImpactPanel";
 import { AskNexus } from "@/components/intelligence/AskNexus";
@@ -37,21 +37,21 @@ function NexusEarth() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [domain, setDomain] = useState<Domain | "all">("all");
   const [tick, setTick] = useState(0);
-  const { liveEvents, fetchedAt, error: liveError } = useLiveEvents();
+  const { liveEvents, sources, fetchedAt, error: liveError } = useLiveEvents();
 
   useEffect(() => {
     const id = window.setInterval(() => setTick((t) => t + 1), 20000);
     return () => window.clearInterval(id);
   }, []);
 
-  // Real seismic activity from USGS replaces the illustrative "disaster" scenarios once it loads.
-  // Everything else stays illustrative until a licensed live source is wired in for that domain.
+  // Real events from live sources (USGS, GDACS, ReliefWeb) replace the illustrative
+  // scenario for any domain they cover, once loaded. Domains with no live source yet
+  // (cyber, financial, supply chain, transport, infrastructure, outbreak) stay illustrative.
+  const liveDomains = useMemo(() => new Set(liveEvents.map((e) => e.domain)), [liveEvents]);
   const allEvents = useMemo(() => {
-    const illustrative = NEXUS_EVENTS.filter(
-      (e) => e.domain !== "disaster" || liveEvents.length === 0,
-    );
+    const illustrative = NEXUS_EVENTS.filter((e) => !liveDomains.has(e.domain));
     return [...liveEvents, ...illustrative];
-  }, [liveEvents]);
+  }, [liveEvents, liveDomains]);
 
   const ages = useMemo(() => {
     const drift = tick / 3;
@@ -138,10 +138,14 @@ function NexusEarth() {
 
             <div className="mt-10 grid gap-4 lg:grid-cols-[1.55fr_1fr]">
               <div className="relative h-[420px] overflow-hidden rounded-xl border border-glass-border bg-surface/40 sm:h-[540px] lg:h-[680px]">
-                <MapStage events={visibleEvents} selectedId={selectedId} onSelect={setSelectedId} />
+                <GlobeStage
+                  events={visibleEvents}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
+                />
                 {!selectedEvent && (
                   <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-glass-border bg-glass px-3 py-1.5 text-center font-mono text-[11px] text-muted-foreground backdrop-blur">
-                    Scroll to zoom · drag to pan · select a signal for its impact chain
+                    Drag to rotate and tilt · scroll to zoom · select a signal for its impact chain
                   </p>
                 )}
                 <div className="pointer-events-none absolute left-4 top-4 rounded-full border border-glass-border bg-glass px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground backdrop-blur">
@@ -151,7 +155,11 @@ function NexusEarth() {
                         <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-primary" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
                       </span>
-                      Live seismic feed · USGS
+                      Live ·{" "}
+                      {sources
+                        .filter((s) => s.ok)
+                        .map((s) => s.name)
+                        .join(", ") || "connecting"}
                     </span>
                   ) : liveError ? (
                     "Live feed unavailable — showing illustrative data"
