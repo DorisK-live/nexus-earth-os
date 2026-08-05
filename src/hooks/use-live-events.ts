@@ -66,9 +66,18 @@ export function useLiveEvents(): LiveEventsState {
 
     void load();
     const id = window.setInterval(load, POLL_MS);
+    // Refresh immediately when the tab regains focus so a returning user never
+    // sees a stale board.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
     return () => {
       mounted.current = false;
       window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
     };
   }, []);
 
