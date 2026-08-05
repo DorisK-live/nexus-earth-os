@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import type { NexusEvent } from "@/data/events";
 
-const POLL_MS = 3 * 60 * 1000; // conservative, low-noise polling cadence across all sources
+const POLL_MS = 30 * 1000; // near real-time refresh of the global signal feed
 
 export interface LiveSourceStatus {
   name: string;
