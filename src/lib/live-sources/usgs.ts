@@ -2,7 +2,7 @@ import type { NexusEvent, Severity } from "@/data/events";
 
 // USGS Earthquake Hazards Program — public, free, no API key, updated every 5 minutes.
 // M4.5+ over the trailing day keeps the feed to a meaningful, non-noisy set of events.
-const USGS_FEED_URL = "https://earthquake.usgs.gov/earthquake/feed/v1.0/summary/4.5_day.geojson";
+const USGS_FEED_URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_day.geojson";
 
 interface UsgsFeature {
   id: string;

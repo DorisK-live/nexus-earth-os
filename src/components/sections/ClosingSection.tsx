@@ -28,10 +28,11 @@ export function ClosingSection() {
             NEXUS EARTH
           </p>
           <p className="max-w-md text-xs text-muted-foreground">
-            Seismic activity is live, sourced automatically from the USGS Earthquake Hazards
-            Program. Other domains are illustrative scenarios pending licensed live data
-            integration.
+            All nine domains stream from live public sources — USGS, GDACS, ReliefWeb, WHO, CISA and
+            NOAA SWPC, plus ECB reference rates and lane exposure derived from active hazards. One
+            shared server feed is pushed to every visitor in real time.
           </p>
+
         </div>
 
         <div className="mt-8 flex justify-center">
