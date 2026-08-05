@@ -26,7 +26,7 @@ function severityFor(text: string, ageDays: number): Severity {
 
 export async function fetchReliefWebEvents(): Promise<NexusEvent[]> {
   const response = await fetch(RELIEFWEB_RSS, {
-    headers: { "User-Agent": "NexusEarth/1.0 (live-events feed)" },
+    headers: { "User-Agent": "NexusEarth/1.0 (live-events feed)", Accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8" },
   });
   if (!response.ok) throw new Error(`ReliefWeb responded ${response.status}`);
   const xml = await response.text();
