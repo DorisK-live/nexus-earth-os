@@ -32,7 +32,22 @@ interface GlobeArc {
 export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<{
-    controls: () => { autoRotate: boolean; autoRotateSpeed: number; enableZoom: boolean };
+    controls: () => {
+      autoRotate: boolean;
+      autoRotateSpeed: number;
+      enableZoom: boolean;
+      enableRotate: boolean;
+      enablePan: boolean;
+      enableDamping: boolean;
+      dampingFactor: number;
+      rotateSpeed: number;
+      zoomSpeed: number;
+      minPolarAngle: number;
+      maxPolarAngle: number;
+      minDistance: number;
+      maxDistance: number;
+      update: () => void;
+    };
     pointOfView: (pov: { lat: number; lng: number; altitude: number }, ms?: number) => void;
   } | null>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -93,9 +108,29 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
     const globe = globeRef.current;
     if (!globe) return;
     const controls = globe.controls();
+    // Full orbit freedom: drag to spin and tilt the pole, wheel/pinch to zoom.
+    controls.enableRotate = true;
+    controls.enableZoom = true;
+    controls.enablePan = false;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.12;
+    controls.rotateSpeed = 0.6;
+    controls.zoomSpeed = 0.8;
+    controls.minPolarAngle = 0;
+    controls.maxPolarAngle = Math.PI;
+    controls.minDistance = 140;
+    controls.maxDistance = 800;
     controls.autoRotate = !selectedId;
     controls.autoRotateSpeed = 0.35;
+    controls.update();
   }, [selectedId, Globe]);
+
+  // Start on a tilted three-quarter view so the sphere reads as a globe, not a disc.
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe || !Globe) return;
+    globe.pointOfView({ lat: 22, lng: 10, altitude: 2.3 }, 0);
+  }, [Globe]);
 
   useEffect(() => {
     const globe = globeRef.current;

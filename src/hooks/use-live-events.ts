@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import type { NexusEvent } from "@/data/events";
 
-const POLL_MS = 3 * 60 * 1000; // conservative, low-noise polling cadence across all sources
+const POLL_MS = 30 * 1000; // near real-time refresh of the global signal feed
 
 export interface LiveSourceStatus {
   name: string;
@@ -66,9 +66,18 @@ export function useLiveEvents(): LiveEventsState {
 
     void load();
     const id = window.setInterval(load, POLL_MS);
+    // Refresh immediately when the tab regains focus so a returning user never
+    // sees a stale board.
+    const onVisible = () => {
+      if (document.visibilityState === "visible") void load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
     return () => {
       mounted.current = false;
       window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
     };
   }, []);
 
