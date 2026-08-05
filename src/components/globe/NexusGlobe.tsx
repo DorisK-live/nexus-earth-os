@@ -32,7 +32,22 @@ interface GlobeArc {
 export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const globeRef = useRef<{
-    controls: () => { autoRotate: boolean; autoRotateSpeed: number; enableZoom: boolean };
+    controls: () => {
+      autoRotate: boolean;
+      autoRotateSpeed: number;
+      enableZoom: boolean;
+      enableRotate: boolean;
+      enablePan: boolean;
+      enableDamping: boolean;
+      dampingFactor: number;
+      rotateSpeed: number;
+      zoomSpeed: number;
+      minPolarAngle: number;
+      maxPolarAngle: number;
+      minDistance: number;
+      maxDistance: number;
+      update: () => void;
+    };
     pointOfView: (pov: { lat: number; lng: number; altitude: number }, ms?: number) => void;
   } | null>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
