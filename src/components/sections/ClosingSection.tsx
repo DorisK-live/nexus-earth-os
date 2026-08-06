@@ -23,16 +23,26 @@ export function ClosingSection() {
           </a>
         </div>
 
-        <div className="mt-16 flex flex-col gap-3 border-t border-glass-border pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-16 flex flex-col gap-4 border-t border-glass-border pt-6 sm:flex-row sm:items-start sm:justify-between">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
             NEXUS EARTH
           </p>
-          <p className="max-w-md text-xs text-muted-foreground">
-            All nine domains stream from live public sources — USGS, GDACS, ReliefWeb, WHO, CISA and
-            NOAA SWPC, plus ECB reference rates and lane exposure derived from active hazards. One
-            shared server feed is pushed to every visitor in real time.
-          </p>
-
+          <div className="max-w-lg space-y-3 text-xs text-muted-foreground">
+            <p>
+              All nine domains stream from live public sources — USGS, GDACS, ReliefWeb, WHO, CISA,
+              NOAA SWPC, plus ECB reference rates and lane exposure derived from active hazards. One
+              shared server feed is pushed to every visitor in real time.
+            </p>
+            <p className="rounded-md border border-glass-border bg-surface/40 p-3 text-muted-foreground/90">
+              <span className="font-semibold text-foreground">Trust disclaimer.</span> NEXUS is a
+              decision-support layer, not an authoritative command system. AI analysis, impact
+              cascades, and recommended actions are model-generated estimates. Derived signals
+              (supply-chain exposure, currency stress, etc.) are heuristics, not confirmed
+              operational impact. Event locations and severity labels are inferred automatically and
+              may be approximate. Always verify critical information with the original source agency
+              before acting.
+            </p>
+          </div>
         </div>
 
         <div className="mt-8 flex justify-center">
