@@ -261,14 +261,19 @@ const STORM_BASINS: { pattern: RegExp; coords: [number, number] }[] = [
 /** Best-effort match of a free-text place string to a country centroid. */
 export function lookupCentroid(text: string | null | undefined): [number, number] | null {
   if (!text) return null;
-  const haystack = text.toLowerCase();
+  const haystack = text.toLowerCase().replace(/[’']/g, "'");
   let best: { key: string; coords: [number, number] } | null = null;
   for (const [key, coords] of Object.entries(COUNTRY_CENTROIDS)) {
     if (haystack.includes(key) && (!best || key.length > best.key.length)) {
       best = { key, coords };
     }
   }
-  return best?.coords ?? null;
+  if (best) return best.coords;
+  // Named storms ("Typhoon Sinlaku") carry no country — place them in their basin.
+  for (const basin of STORM_BASINS) {
+    if (basin.pattern.test(haystack)) return basin.coords;
+  }
+  return null;
 }
 
 /** Deterministic small offset so co-located markers from one feed don't stack perfectly. */
