@@ -136,8 +136,9 @@ function NexusEarth() {
               </p>
             </div>
 
-            <div className="mt-10 grid gap-4 lg:grid-cols-[1.55fr_1fr]">
-              <div className="relative h-[420px] overflow-hidden rounded-xl border border-glass-border bg-surface/40 sm:h-[540px] lg:h-[680px]">
+            <div className="mt-10 grid gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
+              <div className="relative h-[420px] min-w-0 overflow-hidden rounded-xl border border-glass-border bg-surface/40 sm:h-[540px] lg:h-[680px]">
+
                 <GlobeStage
                   events={visibleEvents}
                   selectedId={selectedId}
