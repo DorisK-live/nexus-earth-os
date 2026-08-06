@@ -136,30 +136,38 @@ function NexusEarth() {
               </p>
             </div>
 
-            <div className="mt-10 grid gap-4 lg:grid-cols-[1.55fr_1fr]">
-              <div className="relative h-[420px] overflow-hidden rounded-xl border border-glass-border bg-surface/40 sm:h-[540px] lg:h-[680px]">
+            <div className="mt-10 grid gap-4 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
+              <div className="relative h-[420px] min-w-0 overflow-hidden rounded-xl border border-glass-border bg-surface/40 sm:h-[540px] lg:h-[680px]">
+
                 <GlobeStage
                   events={visibleEvents}
                   selectedId={selectedId}
                   onSelect={setSelectedId}
                 />
                 {!selectedEvent && (
-                  <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-glass-border bg-glass px-3 py-1.5 text-center font-mono text-[11px] text-muted-foreground backdrop-blur">
+                  <p className="pointer-events-none absolute bottom-3 left-1/2 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-2xl border border-glass-border bg-glass px-3 py-1.5 text-center font-mono text-[10px] leading-snug text-muted-foreground backdrop-blur sm:text-[11px]">
                     Drag to rotate and tilt · scroll to zoom · select a signal for its impact chain
                   </p>
                 )}
-                <div className="pointer-events-none absolute left-4 top-4 rounded-full border border-glass-border bg-glass px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground backdrop-blur">
+                <div className="pointer-events-none absolute left-3 right-3 top-3 mx-auto w-fit max-w-[calc(100%-1.5rem)] whitespace-normal break-words rounded-2xl text-center border border-glass-border bg-glass px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground backdrop-blur sm:left-4 sm:right-auto sm:top-4 sm:mx-0">
+
                   {liveEvents.length > 0 ? (
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex flex-wrap items-center justify-center gap-1.5">
                       <span className="relative flex h-1.5 w-1.5">
                         <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-primary" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
                       </span>
-                      Live ·{" "}
-                      {sources
-                        .filter((s) => s.ok)
-                        .map((s) => s.name)
-                        .join(", ") || "connecting"}
+                      <span className="min-w-0 break-words">
+                        Live ·{" "}
+                        {(() => {
+                          const ok = sources.filter((s) => s.ok).map((s) => s.name);
+                          if (ok.length === 0) return "connecting";
+                          return ok.length > 3
+                            ? `${ok.slice(0, 3).join(", ")} +${ok.length - 3}`
+                            : ok.join(", ");
+                        })()}
+                      </span>
+
                     </span>
                   ) : liveError ? (
                     "Live feed unavailable — showing illustrative data"
@@ -178,7 +186,7 @@ function NexusEarth() {
                 </div>
               </div>
 
-              <div className="flex h-[680px] max-h-[680px] flex-col gap-4 lg:h-[680px]">
+              <div className="flex h-[560px] min-w-0 flex-col gap-4 sm:h-[620px] lg:h-[680px]">
                 <div className="min-h-0 flex-1">
                   {selectedEvent ? (
                     <ImpactPanel event={selectedEvent} onClose={() => setSelectedId(null)} />
