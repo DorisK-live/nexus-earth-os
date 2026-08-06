@@ -157,11 +157,17 @@ function NexusEarth() {
                         <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-primary" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
                       </span>
-                      Live ·{" "}
-                      {sources
-                        .filter((s) => s.ok)
-                        .map((s) => s.name)
-                        .join(", ") || "connecting"}
+                      <span className="min-w-0 break-words">
+                        Live ·{" "}
+                        {(() => {
+                          const ok = sources.filter((s) => s.ok).map((s) => s.name);
+                          if (ok.length === 0) return "connecting";
+                          return ok.length > 3
+                            ? `${ok.slice(0, 3).join(", ")} +${ok.length - 3}`
+                            : ok.join(", ");
+                        })()}
+                      </span>
+
                     </span>
                   ) : liveError ? (
                     "Live feed unavailable — showing illustrative data"
