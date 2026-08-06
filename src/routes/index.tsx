@@ -179,7 +179,7 @@ function NexusEarth() {
                 </div>
               </div>
 
-              <div className="flex h-[680px] max-h-[680px] flex-col gap-4 lg:h-[680px]">
+              <div className="flex h-[560px] min-w-0 flex-col gap-4 sm:h-[620px] lg:h-[680px]">
                 <div className="min-h-0 flex-1">
                   {selectedEvent ? (
                     <ImpactPanel event={selectedEvent} onClose={() => setSelectedId(null)} />
