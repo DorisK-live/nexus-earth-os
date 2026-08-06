@@ -145,11 +145,12 @@ function NexusEarth() {
                   onSelect={setSelectedId}
                 />
                 {!selectedEvent && (
-                  <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full border border-glass-border bg-glass px-3 py-1.5 text-center font-mono text-[11px] text-muted-foreground backdrop-blur">
+                  <p className="pointer-events-none absolute bottom-3 left-1/2 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-2xl border border-glass-border bg-glass px-3 py-1.5 text-center font-mono text-[10px] leading-snug text-muted-foreground backdrop-blur sm:text-[11px]">
                     Drag to rotate and tilt · scroll to zoom · select a signal for its impact chain
                   </p>
                 )}
-                <div className="pointer-events-none absolute left-4 top-4 rounded-full border border-glass-border bg-glass px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground backdrop-blur">
+                <div className="pointer-events-none absolute left-3 right-3 top-3 mx-auto w-fit max-w-[calc(100%-1.5rem)] truncate rounded-full border border-glass-border bg-glass px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground backdrop-blur sm:left-4 sm:right-auto sm:top-4 sm:mx-0">
+
                   {liveEvents.length > 0 ? (
                     <span className="flex items-center gap-1.5">
                       <span className="relative flex h-1.5 w-1.5">
