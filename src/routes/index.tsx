@@ -152,7 +152,7 @@ function NexusEarth() {
                 <div className="pointer-events-none absolute left-3 right-3 top-3 mx-auto w-fit max-w-[calc(100%-1.5rem)] whitespace-normal break-words rounded-2xl text-center border border-glass-border bg-glass px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground backdrop-blur sm:left-4 sm:right-auto sm:top-4 sm:mx-0">
 
                   {liveEvents.length > 0 ? (
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex flex-wrap items-center justify-center gap-1.5">
                       <span className="relative flex h-1.5 w-1.5">
                         <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-primary" />
                         <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
