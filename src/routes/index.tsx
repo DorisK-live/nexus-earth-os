@@ -12,7 +12,7 @@ import { StatementSection } from "@/components/sections/StatementSection";
 import { PredictionSection } from "@/components/sections/PredictionSection";
 import { AudienceSection } from "@/components/sections/AudienceSection";
 import { ClosingSection } from "@/components/sections/ClosingSection";
-import { DOMAIN_LABELS, NEXUS_EVENTS, type Domain } from "@/data/events";
+import { DOMAIN_LABELS, NEXUS_EVENTS, type Domain, type NexusEvent } from "@/data/events";
 import { useLiveEvents } from "@/hooks/use-live-events";
 
 const TITLE = "NEXUS EARTH — The Planet's Intelligent Operating System";
