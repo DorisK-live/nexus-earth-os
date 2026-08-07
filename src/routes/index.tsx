@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Globe2 } from "lucide-react";
 
 import { GlobeStage } from "@/components/globe/GlobeStage";
@@ -12,7 +12,7 @@ import { StatementSection } from "@/components/sections/StatementSection";
 import { PredictionSection } from "@/components/sections/PredictionSection";
 import { AudienceSection } from "@/components/sections/AudienceSection";
 import { ClosingSection } from "@/components/sections/ClosingSection";
-import { DOMAIN_LABELS, NEXUS_EVENTS, type Domain } from "@/data/events";
+import { DOMAIN_LABELS, NEXUS_EVENTS, type Domain, type NexusEvent } from "@/data/events";
 import { useLiveEvents } from "@/hooks/use-live-events";
 
 const TITLE = "NEXUS EARTH — The Planet's Intelligent Operating System";
@@ -74,10 +74,26 @@ function NexusEarth() {
     [allEvents, domain, ages],
   );
 
-  const selectedEvent = useMemo(
-    () => allEvents.find((e) => e.id === selectedId) ?? null,
-    [allEvents, selectedId],
+  // Pin the selected signal: live refreshes replace the event objects (and sometimes
+  // their ids), which used to make the impact panel vanish mid-read. The pinned copy
+  // stays until the user picks another signal or closes the panel.
+  const [pinnedEvent, setPinnedEvent] = useState<NexusEvent | null>(null);
+
+  const handleSelect = useCallback(
+    (id: string) => {
+      setSelectedId(id);
+      const found = allEvents.find((e) => e.id === id);
+      if (found) setPinnedEvent(found);
+    },
+    [allEvents],
   );
+
+  const handleClose = useCallback(() => {
+    setSelectedId(null);
+    setPinnedEvent(null);
+  }, []);
+
+  const selectedEvent = pinnedEvent;
 
   const askContext = useMemo(
     () =>
@@ -142,7 +158,7 @@ function NexusEarth() {
                 <GlobeStage
                   events={visibleEvents}
                   selectedId={selectedId}
-                  onSelect={setSelectedId}
+                  onSelect={handleSelect}
                 />
                 {!selectedEvent && (
                   <p className="pointer-events-none absolute bottom-3 left-1/2 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-2xl border border-glass-border bg-glass px-3 py-1.5 text-center font-mono text-[10px] leading-snug text-muted-foreground backdrop-blur sm:text-[11px]">
@@ -189,7 +205,7 @@ function NexusEarth() {
               <div className="flex h-[560px] min-w-0 flex-col gap-4 sm:h-[620px] lg:h-[680px]">
                 <div className="min-h-0 flex-1">
                   {selectedEvent ? (
-                    <ImpactPanel event={selectedEvent} onClose={() => setSelectedId(null)} />
+                    <ImpactPanel event={selectedEvent} onClose={handleClose} />
                   ) : (
                     <div className="glass h-full min-h-0 overflow-hidden rounded-xl p-4">
                       <EventRail
@@ -198,7 +214,7 @@ function NexusEarth() {
                         activeDomain={domain}
                         selectedId={selectedId}
                         onDomainChange={setDomain}
-                        onSelect={setSelectedId}
+                        onSelect={handleSelect}
                       />
                     </div>
                   )}

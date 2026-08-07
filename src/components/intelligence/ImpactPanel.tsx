@@ -58,12 +58,16 @@ export function ImpactPanel({ event, onClose }: Props) {
     }
   }, []);
 
+  const eventId = event?.id ?? null;
   useEffect(() => {
-    if (!event) return;
+    if (!event || !eventId) return;
     const controller = new AbortController();
     void run(event, controller.signal);
     return () => controller.abort();
-  }, [event, run]);
+    // Keyed on the signal id only: live refreshes hand back new object identities for
+    // the same signal, and re-running would blank the panel while the user is reading.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [eventId, run]);
 
   if (!event) return null;
 
