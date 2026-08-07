@@ -205,7 +205,7 @@ function NexusEarth() {
               <div className="flex h-[560px] min-w-0 flex-col gap-4 sm:h-[620px] lg:h-[680px]">
                 <div className="min-h-0 flex-1">
                   {selectedEvent ? (
-                    <ImpactPanel event={selectedEvent} onClose={() => setSelectedId(null)} />
+                    <ImpactPanel event={selectedEvent} onClose={handleClose} />
                   ) : (
                     <div className="glass h-full min-h-0 overflow-hidden rounded-xl p-4">
                       <EventRail
@@ -214,7 +214,7 @@ function NexusEarth() {
                         activeDomain={domain}
                         selectedId={selectedId}
                         onDomainChange={setDomain}
-                        onSelect={setSelectedId}
+                        onSelect={handleSelect}
                       />
                     </div>
                   )}
