@@ -126,19 +126,29 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
   }, [selectedId, Globe]);
 
   // Start on a tilted three-quarter view so the sphere reads as a globe, not a disc.
+  const framedRef = useRef(false);
   useEffect(() => {
     const globe = globeRef.current;
-    if (!globe || !Globe) return;
+    if (!globe || !Globe || framedRef.current) return;
+    framedRef.current = true;
     globe.pointOfView({ lat: 22, lng: 10, altitude: 2.3 }, 0);
   }, [Globe]);
 
+  // Fly to a signal only when the user actually picks a different one — never on the
+  // 15s live refresh, so a zoomed-in study view is preserved.
+  const framedIdRef = useRef<string | null>(null);
   useEffect(() => {
     const globe = globeRef.current;
-    if (!globe || !selectedId) return;
-    const event = events.find((e) => e.id === selectedId);
+    if (!globe || !selectedId) {
+      if (!selectedId) framedIdRef.current = null;
+      return;
+    }
+    if (framedIdRef.current === selectedId) return;
+    const event = eventsRef.current.find((e) => e.id === selectedId);
     if (!event) return;
+    framedIdRef.current = selectedId;
     globe.pointOfView({ lat: event.lat, lng: event.lng, altitude: 1.7 }, 1200);
-  }, [selectedId, events]);
+  }, [selectedId]);
 
   if (!Globe || size.width === 0) {
     return <div ref={containerRef} className="h-full w-full" aria-hidden="true" />;
