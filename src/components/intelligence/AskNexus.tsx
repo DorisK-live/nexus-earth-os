@@ -111,7 +111,11 @@ export function AskNexus({ context }: Props) {
       </div>
 
       {(streaming || answer || error) && (
-        <div className="mt-4 border-t border-glass-border pt-3" aria-live="polite">
+        <div
+          className="mt-4 max-h-[45vh] min-h-0 overflow-y-auto overscroll-contain border-t border-glass-border pt-3 sm:max-h-[320px]"
+          style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" }}
+          aria-live="polite"
+        >
           {error ? (
             <p className="text-sm text-destructive">{error}</p>
           ) : answer ? (
