@@ -125,6 +125,9 @@ export default function NexusGlobe({ events, selectedId, onSelect }: Props) {
     controls.update();
   }, [selectedId, Globe]);
 
+  const eventsRef = useRef(events);
+  eventsRef.current = events;
+
   // Start on a tilted three-quarter view so the sphere reads as a globe, not a disc.
   const framedRef = useRef(false);
   useEffect(() => {
