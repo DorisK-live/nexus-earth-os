@@ -74,10 +74,26 @@ function NexusEarth() {
     [allEvents, domain, ages],
   );
 
-  const selectedEvent = useMemo(
-    () => allEvents.find((e) => e.id === selectedId) ?? null,
-    [allEvents, selectedId],
+  // Pin the selected signal: live refreshes replace the event objects (and sometimes
+  // their ids), which used to make the impact panel vanish mid-read. The pinned copy
+  // stays until the user picks another signal or closes the panel.
+  const [pinnedEvent, setPinnedEvent] = useState<NexusEvent | null>(null);
+
+  const handleSelect = useCallback(
+    (id: string) => {
+      setSelectedId(id);
+      const found = allEvents.find((e) => e.id === id);
+      if (found) setPinnedEvent(found);
+    },
+    [allEvents],
   );
+
+  const handleClose = useCallback(() => {
+    setSelectedId(null);
+    setPinnedEvent(null);
+  }, []);
+
+  const selectedEvent = pinnedEvent;
 
   const askContext = useMemo(
     () =>
