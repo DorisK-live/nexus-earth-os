@@ -158,7 +158,7 @@ function NexusEarth() {
                 <GlobeStage
                   events={visibleEvents}
                   selectedId={selectedId}
-                  onSelect={setSelectedId}
+                  onSelect={handleSelect}
                 />
                 {!selectedEvent && (
                   <p className="pointer-events-none absolute bottom-3 left-1/2 w-[calc(100%-1.5rem)] max-w-md -translate-x-1/2 rounded-2xl border border-glass-border bg-glass px-3 py-1.5 text-center font-mono text-[10px] leading-snug text-muted-foreground backdrop-blur sm:text-[11px]">
