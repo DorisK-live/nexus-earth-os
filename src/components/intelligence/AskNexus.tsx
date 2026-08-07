@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUp, Sparkles } from "lucide-react";
 
 const SUGGESTIONS = [
@@ -17,13 +17,18 @@ export function AskNexus({ context }: Props) {
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const requestIdRef = useRef(0);
+
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   async function ask(prompt: string) {
     const trimmed = prompt.trim();
-    if (!trimmed || streaming) return;
+    if (!trimmed) return;
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
+    const requestId = ++requestIdRef.current;
+    const timeoutId = window.setTimeout(() => controller.abort("timeout"), 60_000);
 
     setStreaming(true);
     setError(null);
@@ -47,12 +52,22 @@ export function AskNexus({ context }: Props) {
       for (;;) {
         const { value, done } = await reader.read();
         if (done) break;
+        if (requestId !== requestIdRef.current) break;
         setAnswer((prev) => prev + value);
       }
     } catch (err) {
-      if ((err as Error).name !== "AbortError") setError((err as Error).message);
+      if (requestId !== requestIdRef.current) return;
+      if (controller.signal.reason === "timeout") {
+        setError("The briefing took too long. Please send the question again.");
+      } else if ((err as Error).name !== "AbortError") {
+        setError((err as Error).message);
+      }
     } finally {
-      setStreaming(false);
+      window.clearTimeout(timeoutId);
+      if (requestId === requestIdRef.current) {
+        abortRef.current = null;
+        setStreaming(false);
+      }
     }
   }
 
@@ -86,8 +101,8 @@ export function AskNexus({ context }: Props) {
         />
         <button
           type="submit"
-          disabled={streaming || question.trim().length < 3}
-          aria-label="Send question"
+          disabled={question.trim().length < 3}
+          aria-label={streaming ? "Send new question" : "Send question"}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground transition-opacity disabled:opacity-40"
         >
           <ArrowUp className="h-3.5 w-3.5" />
@@ -112,7 +127,7 @@ export function AskNexus({ context }: Props) {
 
       {(streaming || answer || error) && (
         <div
-          className="mt-4 max-h-[45vh] min-h-0 overflow-y-auto overscroll-contain border-t border-glass-border pt-3 sm:max-h-[320px]"
+          className="mt-4 min-h-0 border-t border-glass-border pt-3 sm:max-h-[320px] sm:overflow-y-auto sm:overscroll-contain"
           style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" }}
           aria-live="polite"
         >

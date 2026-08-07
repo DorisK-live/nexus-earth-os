@@ -96,7 +96,10 @@ export function EventRail({
         ))}
       </div>
 
-      <ul className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
+      <ul
+        className="min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain pr-1"
+        style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" }}
+      >
         {events.map((event) => {
           const Icon = DOMAIN_ICONS[event.domain];
           const selected = event.id === selectedId;
