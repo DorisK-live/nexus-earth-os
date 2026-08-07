@@ -115,7 +115,10 @@ export function ImpactPanel({ event, onClose }: Props) {
         </button>
       </header>
 
-      <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-4">
+      <div
+        className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain p-4"
+        style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" }}
+      >
         <p className="text-sm leading-relaxed text-muted-foreground">{event.summary}</p>
 
         <div className="flex items-center gap-2 border-t border-glass-border pt-4">
