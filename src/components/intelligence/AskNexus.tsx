@@ -52,6 +52,7 @@ export function AskNexus({ context }: Props) {
       for (;;) {
         const { value, done } = await reader.read();
         if (done) break;
+        if (requestId !== requestIdRef.current) break;
         setAnswer((prev) => prev + value);
       }
     } catch (err) {
