@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Globe2 } from "lucide-react";
 
 import { GlobeStage } from "@/components/globe/GlobeStage";
