@@ -48,20 +48,12 @@ export function AskNexus({ context }: Props) {
         signal: controller.signal,
         body: JSON.stringify({ question: trimmed, context }),
       });
-      if (!response.ok || !response.body) {
-        throw new Error(
-          response.status === 429
-            ? "Intelligence queue is saturated. Try again in a moment."
-            : "Briefing unavailable right now.",
-        );
+      const payload = (await response.json()) as { answer?: string; error?: string };
+      if (!response.ok || !payload.answer) {
+        throw new Error(payload.error || "Briefing unavailable right now.");
       }
-      const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        if (requestId !== requestIdRef.current) break;
-        setAnswer((prev) => prev + value);
-      }
+      if (requestId !== requestIdRef.current) return;
+      setAnswer(payload.answer);
     } catch (err) {
       if (requestId !== requestIdRef.current) return;
       if (controller.signal.reason === "timeout") {
