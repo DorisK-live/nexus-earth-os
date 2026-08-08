@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Sparkles } from "lucide-react";
+import { ArrowUp, LoaderCircle, Search, Sparkles } from "lucide-react";
 
 const SUGGESTIONS = [
   "What happens if a major quake hits Tokyo?",
@@ -13,6 +13,7 @@ interface Props {
 
 export function AskNexus({ context }: Props) {
   const [question, setQuestion] = useState("");
+  const [submittedQuestion, setSubmittedQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,9 +31,15 @@ export function AskNexus({ context }: Props) {
     const requestId = ++requestIdRef.current;
     const timeoutId = window.setTimeout(() => controller.abort("timeout"), 60_000);
 
+    setSubmittedQuestion(trimmed);
+    setQuestion("");
     setStreaming(true);
     setError(null);
     setAnswer("");
+
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
 
     try {
       const response = await fetch("/api/ask", {
@@ -115,7 +122,6 @@ export function AskNexus({ context }: Props) {
             key={s}
             type="button"
             onClick={() => {
-              setQuestion(s);
               void ask(s);
             }}
             className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
@@ -125,16 +131,32 @@ export function AskNexus({ context }: Props) {
         ))}
       </div>
 
-      {(streaming || answer || error) && (
+      {(submittedQuestion || streaming || answer || error) && (
         <div
           className="mt-4 min-h-0 border-t border-glass-border pt-3 sm:max-h-[320px] sm:overflow-y-auto sm:overscroll-contain"
           style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" }}
           aria-live="polite"
         >
+          {submittedQuestion && (
+            <div className="mb-3 flex items-start gap-2 rounded-lg border border-glass-border bg-surface/50 px-3 py-2.5">
+              <Search className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
+              <p className="min-w-0 break-words text-sm font-medium leading-relaxed text-foreground">
+                {submittedQuestion}
+              </p>
+            </div>
+          )}
+
+          {streaming && !answer && !error && (
+            <div className="flex items-center gap-2.5 py-1 font-mono text-xs text-muted-foreground" role="status">
+              <LoaderCircle className="h-4 w-4 shrink-0 animate-spin text-primary" aria-hidden="true" />
+              <span>Synthesising briefing…</span>
+            </div>
+          )}
+
           {error ? (
             <p className="text-sm text-destructive">{error}</p>
           ) : answer ? (
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 border-t border-glass-border pt-3">
               {answer.split("\n").filter(Boolean).map((line, i) => (
                 <p
                   key={i}
@@ -148,12 +170,13 @@ export function AskNexus({ context }: Props) {
                 </p>
               ))}
               {streaming && (
-                <span className="inline-block h-3.5 w-1.5 animate-pulse bg-primary align-middle" aria-hidden="true" />
+                <span className="inline-flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                  <LoaderCircle className="h-3.5 w-3.5 animate-spin text-primary" aria-hidden="true" />
+                  Receiving briefing…
+                </span>
               )}
             </div>
-          ) : (
-            <p className="font-mono text-xs text-muted-foreground">Synthesising briefing…</p>
-          )}
+          ) : null}
         </div>
       )}
     </section>
