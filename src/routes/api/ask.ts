@@ -52,7 +52,11 @@ export const Route = createFileRoute("/api/ask")({
           return Response.json({ answer: text });
         } catch (error) {
           const message = error instanceof Error ? error.message : "Briefing failed.";
-          const status = message.includes("429") ? 429 : message.includes("402") ? 402 : 502;
+          const status = message.includes("429")
+            ? 429
+            : message.includes("402") || message.includes("Payment Required")
+              ? 402
+              : 502;
           console.error("nexus ask error", message);
           return Response.json(
             {
