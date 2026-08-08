@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { streamText } from "ai";
+import { generateText } from "ai";
 import { z } from "zod";
 
 import {
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/api/ask")({
         const gateway = createLovableAiGatewayProvider(apiKey, getLovableAiGatewayRunId(request));
 
         try {
-          const result = streamText({
+          const { text } = await generateText({
             model: gateway(NEXUS_MODEL),
             system: [
               "You are NEXUS EARTH, a planetary risk intelligence system.",
@@ -46,10 +46,29 @@ export const Route = createFileRoute("/api/ask")({
               : input.question,
           });
 
-          return result.toTextStreamResponse();
+          if (!text.trim()) {
+            return Response.json({ error: "The briefing came back empty. Try again." }, { status: 502 });
+          }
+          return Response.json({ answer: text });
         } catch (error) {
-          console.error("nexus ask error", error);
-          return new Response("Intelligence stream unavailable.", { status: 502 });
+          const message = error instanceof Error ? error.message : "Briefing failed.";
+          const status = message.includes("429")
+            ? 429
+            : message.includes("402") || message.includes("Payment Required")
+              ? 402
+              : 502;
+          console.error("nexus ask error", message);
+          return Response.json(
+            {
+              error:
+                status === 429
+                  ? "Intelligence queue is saturated. Try again in a moment."
+                  : status === 402
+                    ? "AI credits are currently unavailable."
+                    : "Briefing unavailable right now.",
+            },
+            { status },
+          );
         }
       },
     },
