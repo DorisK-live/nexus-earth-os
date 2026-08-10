@@ -42,8 +42,13 @@ export function createLovableAiGatewayRunIdFetch(initialRunId?: string) {
   };
 }
 
-export function createLovableAiGatewayProvider(lovableApiKey: string, initialRunId?: string) {
-  const runIdFetch = createLovableAiGatewayRunIdFetch(initialRunId);
+export function createLovableAiGatewayProvider(
+  lovableApiKey: string,
+  initialRunId?: string,
+  fetchImpl?: typeof fetch,
+) {
+  const runIdFetch = createLovableAiGatewayRunIdFetch(initialRunId, fetchImpl);
+
 
   const provider = createOpenAICompatible({
     name: "lovable",
