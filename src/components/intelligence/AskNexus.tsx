@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, LoaderCircle, Search, Sparkles } from "lucide-react";
+import { ArrowUp, ExternalLink, LoaderCircle, Search, Sparkles } from "lucide-react";
 
 const SUGGESTIONS = [
   "What happens if a major quake hits Tokyo?",
