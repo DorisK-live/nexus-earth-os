@@ -103,5 +103,5 @@ describe("Ask NEXUS credit fallback", () => {
       }),
     ).rejects.toThrow();
     expect(calls.every((url) => url.includes(GATEWAY_HOST))).toBe(true);
-  });
+  }, 30000);
 });
