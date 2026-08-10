@@ -2,7 +2,10 @@ import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 
 const LOVABLE_AIG_RUN_ID_HEADER = "X-Lovable-AIG-Run-ID";
 
-export function createLovableAiGatewayRunIdFetch(initialRunId?: string) {
+export function createLovableAiGatewayRunIdFetch(
+  initialRunId?: string,
+  fetchImpl: typeof fetch = fetch,
+) {
   let runId = initialRunId?.trim() || undefined;
   let resolveRunId: (value: string | undefined) => void = () => {};
   let runIdResolved = false;
@@ -29,7 +32,7 @@ export function createLovableAiGatewayRunIdFetch(initialRunId?: string) {
         headers.set(LOVABLE_AIG_RUN_ID_HEADER, runId);
       }
       try {
-        const response = await fetch(input, { ...init, headers });
+        const response = await fetchImpl(input, { ...init, headers });
         publishRunId(response.headers.get(LOVABLE_AIG_RUN_ID_HEADER) ?? undefined);
         return response;
       } catch (error) {
