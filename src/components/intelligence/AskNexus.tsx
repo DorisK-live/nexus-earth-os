@@ -146,7 +146,20 @@ export function AskNexus({ context }: Props) {
           )}
 
           {error ? (
-            <p className="text-sm text-destructive">{error}</p>
+            <div className="space-y-2">
+              <p className="text-sm text-destructive">{error}</p>
+              {error.includes("AI credits are currently unavailable") && (
+                <a
+                  href="https://lovable.dev/settings/plans"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                >
+                  Upgrade credits
+                  <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                </a>
+              )}
+            </div>
           ) : answer ? (
             <div className="space-y-1.5 border-t border-glass-border pt-3">
               {answer.split("\n").filter(Boolean).map((line, i) => (
