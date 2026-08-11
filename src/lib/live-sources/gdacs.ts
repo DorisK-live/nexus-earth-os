@@ -36,6 +36,7 @@ function extractTag(xml: string, tag: string): string | null {
   return captured
     .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/, "$1")
     .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
     .trim();
 }
 
