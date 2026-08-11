@@ -36,6 +36,10 @@ export interface NexusEvent {
   isLive?: boolean;
   /** Absolute detection time in epoch ms, used to recompute a live event's age accurately on every tick. */
   timestampMs?: number;
+  /** Canonical page at the issuing agency, so any claim can be checked at source. */
+  sourceUrl?: string;
+  /** True only when the signal comes verbatim from an official agency feed. Derived/heuristic signals are false. */
+  verified?: boolean;
 }
 
 export const DOMAIN_LABELS: Record<Domain, string> = {
