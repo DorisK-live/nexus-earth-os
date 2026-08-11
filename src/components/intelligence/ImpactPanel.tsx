@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Sparkles, TriangleAlert, X } from "lucide-react";
+import { ExternalLink, Sparkles, TriangleAlert, X } from "lucide-react";
 
 import { DOMAIN_LABELS, SEVERITY_COLOR, SEVERITY_LABELS, type NexusEvent } from "@/data/events";
 import { DOMAIN_ICONS } from "@/components/events/EventRail";
@@ -103,6 +103,28 @@ export function ImpactPanel({ event, onClose }: Props) {
           </h3>
           <p className="mt-1 font-mono text-[11px] text-muted-foreground">
             {event.location}, {event.country} · {event.metric} · {event.source}
+          </p>
+          <p className="mt-1.5 flex flex-wrap items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em]">
+            {event.verified === false ? (
+              <span className="rounded-full bg-secondary px-1.5 py-0.5 text-muted-foreground">
+                Derived · not agency-verified
+              </span>
+            ) : (
+              <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-primary">
+                Verified source
+              </span>
+            )}
+            {event.sourceUrl && (
+              <a
+                href={event.sourceUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-flex items-center gap-1 rounded-full border border-glass-border px-1.5 py-0.5 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Check at source
+                <ExternalLink className="h-3 w-3" aria-hidden="true" />
+              </a>
+            )}
           </p>
         </div>
         <button

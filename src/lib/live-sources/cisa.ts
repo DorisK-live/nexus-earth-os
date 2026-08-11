@@ -64,6 +64,8 @@ export async function fetchCisaAdvisories(): Promise<NexusEvent[]> {
         summary: description.slice(0, 400),
         links: [],
         isLive: true,
+        verified: true,
+        ...(link ? { sourceUrl: link } : {}),
         ...(Number.isFinite(ms) ? { timestampMs: ms } : {}),
       };
     })

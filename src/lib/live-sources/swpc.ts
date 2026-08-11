@@ -68,6 +68,8 @@ export async function fetchSpaceWeatherAlerts(): Promise<NexusEvent[]> {
         summary: message.replace(/\r?\n/g, " ").replace(/\s+/g, " ").slice(0, 400),
         links: [],
         isLive: true,
+        verified: true,
+        sourceUrl: "https://www.swpc.noaa.gov/products/alerts-watches-and-warnings",
         timestampMs: ms,
       } satisfies NexusEvent,
     ];

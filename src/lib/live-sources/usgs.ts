@@ -73,6 +73,8 @@ function toNexusEvent(feature: UsgsFeature): NexusEvent | null {
       .join(" "),
     links: [],
     isLive: true,
+    verified: true,
+    sourceUrl: `https://earthquake.usgs.gov/earthquakes/eventpage/${feature.id}/executive`,
     timestampMs: p.time,
   };
 }
