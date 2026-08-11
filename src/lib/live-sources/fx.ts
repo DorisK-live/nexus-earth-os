@@ -103,6 +103,8 @@ export async function fetchCurrencyStress(): Promise<NexusEvent[]> {
       summary: `USD/${code} moved from ${then.toFixed(4)} (${before.date}) to ${now.toFixed(4)} (${latest.date}), a ${pct > 0 ? "+" : ""}${pct.toFixed(1)}% shift — a live indicator of currency and import-cost stress in ${place.country}.`,
       links: [],
       isLive: true,
+      verified: true,
+      sourceUrl: "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
       timestampMs: latest.ms,
     });
   }
