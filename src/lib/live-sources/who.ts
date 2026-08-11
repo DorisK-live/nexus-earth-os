@@ -52,6 +52,10 @@ export async function fetchWhoOutbreaks(): Promise<NexusEvent[]> {
         summary: item.Summary ?? title,
         links: [],
         isLive: true,
+        verified: true,
+        ...(item.UrlName
+          ? { sourceUrl: `https://www.who.int/emergencies/disease-outbreak-news/item/${item.UrlName}` }
+          : {}),
         ...(Number.isFinite(ms) ? { timestampMs: ms } : {}),
       };
     })
