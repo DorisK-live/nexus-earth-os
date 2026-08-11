@@ -89,8 +89,10 @@ function parseItem(itemXml: string): NexusEvent | null {
         ? `${EVENT_TYPE_LABEL[eventType] ?? eventType} · ${severityValue}${severityUnit ?? ""}`
         : (EVENT_TYPE_LABEL[eventType] ?? eventType),
       summary: description ?? title,
-      links: link ? [] : [],
+      links: [],
       isLive: true,
+      verified: true,
+      ...(link ? { sourceUrl: link } : {}),
       ...(Number.isFinite(timestampMs) ? { timestampMs } : {}),
     };
   } catch {
