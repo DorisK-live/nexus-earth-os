@@ -136,6 +136,11 @@ export function EventRail({
                           Live
                         </span>
                       )}
+                      {event.verified === false && (
+                        <span className="shrink-0 rounded-full bg-secondary px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
+                          Derived
+                        </span>
+                      )}
                       <span className="truncate">{event.title}</span>
                     </p>
                     <p className="mt-0.5 flex flex-wrap items-center gap-x-2 font-mono text-[11px] text-muted-foreground">
