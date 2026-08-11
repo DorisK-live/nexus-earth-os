@@ -62,6 +62,8 @@ function build(
         },
       ],
       isLive: true,
+      verified: false,
+      ...(closest.hazard.sourceUrl ? { sourceUrl: closest.hazard.sourceUrl } : {}),
       ...(closest.hazard.timestampMs ? { timestampMs: closest.hazard.timestampMs } : {}),
     });
   }
