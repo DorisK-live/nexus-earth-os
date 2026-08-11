@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Sparkles, TriangleAlert, X } from "lucide-react";
+import { ExternalLink, Sparkles, TriangleAlert, X } from "lucide-react";
 
 import { DOMAIN_LABELS, SEVERITY_COLOR, SEVERITY_LABELS, type NexusEvent } from "@/data/events";
 import { DOMAIN_ICONS } from "@/components/events/EventRail";
