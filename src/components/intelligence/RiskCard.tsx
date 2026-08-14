@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 const BAND_CLASS: Record<string, string> = {
   low: "text-muted-foreground",
   moderate: "text-foreground",
-  high: "text-severity-high",
-  critical: "text-severity-critical",
+  high: "text-sev-high",
+  critical: "text-sev-critical",
 };
 
 interface Props {
