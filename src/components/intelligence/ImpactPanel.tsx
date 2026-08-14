@@ -143,6 +143,8 @@ export function ImpactPanel({ event, onClose }: Props) {
       >
         <p className="text-sm leading-relaxed text-muted-foreground">{event.summary}</p>
 
+        <RiskCard event={event} peers={peers} />
+
         <div className="flex items-center gap-2 border-t border-glass-border pt-4">
           <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
           <h4 className="font-mono text-[11px] uppercase tracking-[0.16em] text-primary">
