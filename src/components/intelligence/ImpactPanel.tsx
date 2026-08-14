@@ -3,6 +3,7 @@ import { ExternalLink, Sparkles, TriangleAlert, X } from "lucide-react";
 
 import { DOMAIN_LABELS, SEVERITY_COLOR, SEVERITY_LABELS, type NexusEvent } from "@/data/events";
 import { DOMAIN_ICONS } from "@/components/events/EventRail";
+import { RiskCard } from "@/components/intelligence/RiskCard";
 
 export interface Analysis {
   whyItMatters: string;
@@ -21,9 +22,11 @@ export interface Analysis {
 interface Props {
   event: NexusEvent | null;
   onClose: () => void;
+  /** Other current signals, used for corroboration in the risk score. */
+  peers?: NexusEvent[];
 }
 
-export function ImpactPanel({ event, onClose }: Props) {
+export function ImpactPanel({ event, onClose, peers = [] }: Props) {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -142,6 +145,8 @@ export function ImpactPanel({ event, onClose }: Props) {
         style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-y" }}
       >
         <p className="text-sm leading-relaxed text-muted-foreground">{event.summary}</p>
+
+        <RiskCard event={event} peers={peers} />
 
         <div className="flex items-center gap-2 border-t border-glass-border pt-4">
           <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" />

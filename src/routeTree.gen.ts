@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SourcesRouteImport } from './routes/sources'
 import { Route as ApiAnalyzeRouteImport } from './routes/api/analyze'
 import { Route as ApiAskRouteImport } from './routes/api/ask'
 import { Route as ApiLiveEventsRouteImport } from './routes/api/live-events'
@@ -18,6 +19,11 @@ import { Route as ApiLiveStreamRouteImport } from './routes/api/live-stream'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SourcesRoute = SourcesRouteImport.update({
+  id: '/sources',
+  path: '/sources',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAnalyzeRoute = ApiAnalyzeRouteImport.update({
@@ -43,6 +49,7 @@ const ApiLiveStreamRoute = ApiLiveStreamRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/sources': typeof SourcesRoute
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/ask': typeof ApiAskRoute
   '/api/live-events': typeof ApiLiveEventsRoute
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/sources': typeof SourcesRoute
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/ask': typeof ApiAskRoute
   '/api/live-events': typeof ApiLiveEventsRoute
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/sources': typeof SourcesRoute
   '/api/analyze': typeof ApiAnalyzeRoute
   '/api/ask': typeof ApiAskRoute
   '/api/live-events': typeof ApiLiveEventsRoute
@@ -66,13 +75,24 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/api/analyze' | '/api/ask' | '/api/live-events' | '/api/live-stream'
+    | '/'
+    | '/sources'
+    | '/api/analyze'
+    | '/api/ask'
+    | '/api/live-events'
+    | '/api/live-stream'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/api/analyze' | '/api/ask' | '/api/live-events' | '/api/live-stream'
+    | '/'
+    | '/sources'
+    | '/api/analyze'
+    | '/api/ask'
+    | '/api/live-events'
+    | '/api/live-stream'
   id:
     | '__root__'
     | '/'
+    | '/sources'
     | '/api/analyze'
     | '/api/ask'
     | '/api/live-events'
@@ -81,6 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SourcesRoute: typeof SourcesRoute
   ApiAnalyzeRoute: typeof ApiAnalyzeRoute
   ApiAskRoute: typeof ApiAskRoute
   ApiLiveEventsRoute: typeof ApiLiveEventsRoute
@@ -94,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sources': {
+      id: '/sources'
+      path: '/sources'
+      fullPath: '/sources'
+      preLoaderRoute: typeof SourcesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/analyze': {
@@ -129,6 +157,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SourcesRoute: SourcesRoute,
   ApiAnalyzeRoute: ApiAnalyzeRoute,
   ApiAskRoute: ApiAskRoute,
   ApiLiveEventsRoute: ApiLiveEventsRoute,
@@ -137,3 +166,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

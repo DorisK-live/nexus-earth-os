@@ -167,28 +167,37 @@ function NexusEarth() {
                 )}
                 <div className="pointer-events-none absolute left-3 right-3 top-3 mx-auto w-fit max-w-[calc(100%-1.5rem)] whitespace-normal break-words rounded-2xl text-center border border-glass-border bg-glass px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground backdrop-blur sm:left-4 sm:right-auto sm:top-4 sm:mx-0">
 
-                  {liveEvents.length > 0 ? (
+                  {sources.length > 0 || liveEvents.length > 0 ? (
                     <span className="flex flex-wrap items-center justify-center gap-1.5">
                       <span className="relative flex h-1.5 w-1.5">
-                        <span className="absolute inline-flex h-full w-full animate-pulse-dot rounded-full bg-primary" />
-                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                        <span
+                          className={`absolute inline-flex h-full w-full rounded-full ${
+                            health === "live"
+                              ? "animate-pulse-dot bg-primary"
+                              : health === "degraded"
+                                ? "bg-sev-moderate"
+                                : "bg-destructive"
+                          }`}
+                        />
+                        <span
+                          className={`relative inline-flex h-1.5 w-1.5 rounded-full ${
+                            health === "live"
+                              ? "bg-primary"
+                              : health === "degraded"
+                                ? "bg-sev-moderate"
+                                : "bg-destructive"
+                          }`}
+                        />
                       </span>
                       <span className="min-w-0 break-words">
-                        Live ·{" "}
-                        {(() => {
-                          const ok = sources.filter((s) => s.ok).map((s) => s.name);
-                          if (ok.length === 0) return "connecting";
-                          return ok.length > 3
-                            ? `${ok.slice(0, 3).join(", ")} +${ok.length - 3}`
-                            : ok.join(", ");
-                        })()}
+                        {health.toUpperCase()} ·{" "}
+                        {`${sources.filter((s) => s.ok).length}/${sources.length} providers`}
                       </span>
-
                     </span>
                   ) : liveError ? (
-                    "Live feed unavailable — showing illustrative data"
+                    "Data temporarily unavailable"
                   ) : (
-                    "Connecting to live feed…"
+                    "Connecting to live providers…"
                   )}
                   {fetchedAt && liveEvents.length > 0 && (
                     <span className="ml-2 opacity-60">

@@ -6,6 +6,8 @@ import { fetchWhoOutbreaks } from "@/lib/live-sources/who";
 import { fetchCisaAdvisories } from "@/lib/live-sources/cisa";
 import { fetchSpaceWeatherAlerts } from "@/lib/live-sources/swpc";
 import { fetchCurrencyStress } from "@/lib/live-sources/fx";
+import { fetchNwsAlerts } from "@/lib/live-sources/nws";
+import { fetchAirQuality } from "@/lib/live-sources/air-quality";
 import { deriveLaneEvents } from "@/lib/live-sources/derived";
 
 export interface SourceStatus {
@@ -25,6 +27,8 @@ export interface LiveFeedSnapshot {
 const SOURCES: { name: string; fetch: () => Promise<NexusEvent[]> }[] = [
   { name: "USGS", fetch: fetchUsgsEarthquakes },
   { name: "GDACS", fetch: fetchGdacsEvents },
+  { name: "NWS Alerts", fetch: fetchNwsAlerts },
+  { name: "Air Quality", fetch: fetchAirQuality },
   { name: "ReliefWeb", fetch: fetchReliefWebEvents },
   { name: "WHO", fetch: fetchWhoOutbreaks },
   { name: "CISA", fetch: fetchCisaAdvisories },
