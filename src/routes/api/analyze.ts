@@ -54,7 +54,8 @@ export const Route = createFileRoute("/api/analyze")({
     handlers: {
       POST: async ({ request }) => {
         const apiKey = process.env["LOVABLE_API_KEY"];
-        if (!apiKey) {
+        const geminiKey = process.env["GEMINI_API_KEY"];
+        if (!apiKey && !geminiKey) {
           return Response.json({ error: "AI is not configured." }, { status: 500 });
         }
 
