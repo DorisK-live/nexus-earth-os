@@ -66,7 +66,26 @@ export const Route = createFileRoute("/api/analyze")({
           return Response.json({ error: "Invalid request." }, { status: 400 });
         }
 
-        const gateway = createLovableAiGatewayProvider(apiKey, getLovableAiGatewayRunId(request));
+        const runAnalysis = async () => {
+          if (apiKey) {
+            const gateway = createLovableAiGatewayProvider(apiKey, getLovableAiGatewayRunId(request));
+            try {
+              return await generateText({
+                model: gateway(NEXUS_MODEL),
+                output: Output.object({ schema: AnalysisSchema }),
+                prompt,
+              });
+            } catch (error) {
+              if (!geminiKey || !isCreditsExhausted(error)) throw error;
+            }
+          }
+          const gemini = createGeminiProvider(geminiKey!);
+          return generateText({
+            model: gemini(GEMINI_FALLBACK_MODEL),
+            output: Output.object({ schema: AnalysisSchema }),
+            prompt,
+          });
+        };
 
         const prompt = [
           "Analyse this global event as a planetary risk intelligence system.",
