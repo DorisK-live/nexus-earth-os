@@ -14,6 +14,7 @@ import { AudienceSection } from "@/components/sections/AudienceSection";
 import { ClosingSection } from "@/components/sections/ClosingSection";
 import { DOMAIN_LABELS, NEXUS_EVENTS, type Domain, type NexusEvent } from "@/data/events";
 import { useLiveEvents } from "@/hooks/use-live-events";
+import { feedHealth } from "@/lib/providers";
 
 const TITLE = "NEXUS EARTH — The Planet's Intelligent Operating System";
 const DESCRIPTION =
@@ -38,6 +39,7 @@ function NexusEarth() {
   const [domain, setDomain] = useState<Domain | "all">("all");
   const [tick, setTick] = useState(0);
   const { liveEvents, sources, fetchedAt, error: liveError } = useLiveEvents();
+  const health = feedHealth(sources, liveEvents.length > 0);
 
   useEffect(() => {
     const id = window.setInterval(() => setTick((t) => t + 1), 20000);
