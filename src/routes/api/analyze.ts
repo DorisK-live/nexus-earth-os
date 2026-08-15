@@ -107,11 +107,7 @@ export const Route = createFileRoute("/api/analyze")({
         ].join("\n");
 
         try {
-          const { output } = await generateText({
-            model: gateway(NEXUS_MODEL),
-            output: Output.object({ schema: AnalysisSchema }),
-            prompt,
-          });
+          const { output } = await runAnalysis();
 
           const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
           return Response.json({
