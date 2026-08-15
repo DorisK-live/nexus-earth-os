@@ -4,7 +4,9 @@ import { generateText } from "ai";
 import { createLovableAiGatewayProvider, NEXUS_MODEL } from "./ai-gateway.server";
 
 /** Model used when falling back to the user's own Gemini API key. */
-export const GEMINI_FALLBACK_MODEL = "gemini-2.5-flash";
+export const GEMINI_FALLBACK_MODEL = "gemini-3.5-flash";
+/** Tried in order if the primary fallback model is retired/unavailable (404). */
+export const GEMINI_FALLBACK_MODELS = [GEMINI_FALLBACK_MODEL, "gemini-flash-latest", "gemini-2.5-flash"];
 const GEMINI_OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai";
 
 /**
