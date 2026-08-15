@@ -7,6 +7,11 @@ import {
   getLovableAiGatewayRunId,
   NEXUS_MODEL,
 } from "@/lib/ai-gateway.server";
+import {
+  createGeminiProvider,
+  GEMINI_FALLBACK_MODEL,
+  isCreditsExhausted,
+} from "@/lib/ai-fallback.server";
 
 const RequestSchema = z.object({
   title: z.string().min(3).max(300),
@@ -49,7 +54,8 @@ export const Route = createFileRoute("/api/analyze")({
     handlers: {
       POST: async ({ request }) => {
         const apiKey = process.env["LOVABLE_API_KEY"];
-        if (!apiKey) {
+        const geminiKey = process.env["GEMINI_API_KEY"];
+        if (!apiKey && !geminiKey) {
           return Response.json({ error: "AI is not configured." }, { status: 500 });
         }
 
@@ -60,7 +66,26 @@ export const Route = createFileRoute("/api/analyze")({
           return Response.json({ error: "Invalid request." }, { status: 400 });
         }
 
-        const gateway = createLovableAiGatewayProvider(apiKey, getLovableAiGatewayRunId(request));
+        const runAnalysis = async () => {
+          if (apiKey) {
+            const gateway = createLovableAiGatewayProvider(apiKey, getLovableAiGatewayRunId(request));
+            try {
+              return await generateText({
+                model: gateway(NEXUS_MODEL),
+                output: Output.object({ schema: AnalysisSchema }),
+                prompt,
+              });
+            } catch (error) {
+              if (!geminiKey || !isCreditsExhausted(error)) throw error;
+            }
+          }
+          const gemini = createGeminiProvider(geminiKey!);
+          return generateText({
+            model: gemini(GEMINI_FALLBACK_MODEL),
+            output: Output.object({ schema: AnalysisSchema }),
+            prompt,
+          });
+        };
 
         const prompt = [
           "Analyse this global event as a planetary risk intelligence system.",
@@ -82,11 +107,7 @@ export const Route = createFileRoute("/api/analyze")({
         ].join("\n");
 
         try {
-          const { output } = await generateText({
-            model: gateway(NEXUS_MODEL),
-            output: Output.object({ schema: AnalysisSchema }),
-            prompt,
-          });
+          const { output } = await runAnalysis();
 
           const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
           return Response.json({

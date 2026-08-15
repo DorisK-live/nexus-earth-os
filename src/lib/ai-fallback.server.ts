@@ -4,7 +4,9 @@ import { generateText } from "ai";
 import { createLovableAiGatewayProvider, NEXUS_MODEL } from "./ai-gateway.server";
 
 /** Model used when falling back to the user's own Gemini API key. */
-export const GEMINI_FALLBACK_MODEL = "gemini-2.5-flash";
+export const GEMINI_FALLBACK_MODEL = "gemini-3.5-flash";
+/** Tried in order if the primary fallback model is retired/unavailable (404). */
+export const GEMINI_FALLBACK_MODELS = [GEMINI_FALLBACK_MODEL, "gemini-flash-latest", "gemini-2.5-flash"];
 const GEMINI_OPENAI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai";
 
 /**
@@ -71,13 +73,20 @@ export async function generateBriefing({
 
   if (geminiApiKey) {
     const gemini = createGeminiProvider(geminiApiKey, fetchImpl);
-    const { text } = await generateText({
-      model: gemini(GEMINI_FALLBACK_MODEL),
-      system,
-      prompt,
-    });
-    if (!text.trim()) throw new Error("Empty briefing from fallback provider.");
-    return { text, provider: "gemini" };
+    let lastError: unknown;
+    for (const modelId of GEMINI_FALLBACK_MODELS) {
+      try {
+        const { text } = await generateText({ model: gemini(modelId), system, prompt });
+        if (text.trim()) return { text, provider: "gemini" };
+        lastError = new Error("Empty briefing from fallback provider.");
+      } catch (error) {
+        lastError = error;
+        // Only retry the next model when this one is missing/retired.
+        const message = error instanceof Error ? error.message : String(error ?? "");
+        if (!message.includes("404") && !message.toLowerCase().includes("not found")) break;
+      }
+    }
+    throw lastError ?? new Error("Fallback provider failed.");
   }
 
   throw primaryError ?? new Error("AI is not configured.");
