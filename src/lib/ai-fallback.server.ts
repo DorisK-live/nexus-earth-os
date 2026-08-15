@@ -73,13 +73,20 @@ export async function generateBriefing({
 
   if (geminiApiKey) {
     const gemini = createGeminiProvider(geminiApiKey, fetchImpl);
-    const { text } = await generateText({
-      model: gemini(GEMINI_FALLBACK_MODEL),
-      system,
-      prompt,
-    });
-    if (!text.trim()) throw new Error("Empty briefing from fallback provider.");
-    return { text, provider: "gemini" };
+    let lastError: unknown;
+    for (const modelId of GEMINI_FALLBACK_MODELS) {
+      try {
+        const { text } = await generateText({ model: gemini(modelId), system, prompt });
+        if (text.trim()) return { text, provider: "gemini" };
+        lastError = new Error("Empty briefing from fallback provider.");
+      } catch (error) {
+        lastError = error;
+        // Only retry the next model when this one is missing/retired.
+        const message = error instanceof Error ? error.message : String(error ?? "");
+        if (!message.includes("404") && !message.toLowerCase().includes("not found")) break;
+      }
+    }
+    throw lastError ?? new Error("Fallback provider failed.");
   }
 
   throw primaryError ?? new Error("AI is not configured.");
