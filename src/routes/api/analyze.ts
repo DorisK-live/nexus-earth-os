@@ -7,6 +7,11 @@ import {
   getLovableAiGatewayRunId,
   NEXUS_MODEL,
 } from "@/lib/ai-gateway.server";
+import {
+  createGeminiProvider,
+  GEMINI_FALLBACK_MODEL,
+  isCreditsExhausted,
+} from "@/lib/ai-fallback.server";
 
 const RequestSchema = z.object({
   title: z.string().min(3).max(300),
